@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "client/src/index.css"
+        ],
+        "createdAt": "2026-11-16T05:11:44.133Z",
+        "reason": "Faithful port of the existing site's .gradient brand style (public/assets/css/style.css); user asked for the same site in React"
+      }
+    ]
+  }
+}

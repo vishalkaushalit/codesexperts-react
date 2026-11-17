@@ -1,0 +1,13 @@
+node_modules/
+client/dist/
+server/.env
+.DS_Store
+*.log
+.env.local
+.vercel
+
+# Database dump with the admin password hash and email; keep it out of git
+server/database/*.sql
+
+# Tool caches
+.impeccable/hook.cache.json

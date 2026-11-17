@@ -1,0 +1,109 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+/* Design tokens. Breakpoints match the original Bootstrap site so layouts switch at the same widths. */
+@theme {
+    --breakpoint-sm: 36rem; /* 576px */
+    --breakpoint-md: 48rem; /* 768px */
+    --breakpoint-lg: 62rem; /* 992px */
+    --breakpoint-xl: 75rem; /* 1200px */
+    --breakpoint-2xl: 87.5rem; /* 1400px */
+    --breakpoint-3xl: 100rem; /* 1600px */
+
+    --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+
+    --color-brand: #ffa800;
+    --color-brand-dark: #e69700;
+    --color-violet: #9a7dff;
+    --color-surface: #110f0f;
+
+    --animate-spin-slow: spin 20s linear infinite;
+    --animate-spin-slower: spin 40s linear infinite;
+    --animate-float: float 2s linear infinite;
+    --animate-marquee-left: marquee-left 25s linear infinite;
+    --animate-marquee-right: marquee-right 25s linear infinite;
+
+    @keyframes float {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-30px);
+        }
+    }
+    @keyframes marquee-left {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-50%);
+        }
+    }
+    @keyframes marquee-right {
+        from {
+            transform: translateX(-50%);
+        }
+        to {
+            transform: translateX(0);
+        }
+    }
+}
+
+/* Same widths as Bootstrap's .container (540 / 720 / 960 / 1140 / 1320). */
+@utility site-container {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 0.75rem;
+    @media (width >= 36rem) {
+        max-width: 540px;
+    }
+    @media (width >= 48rem) {
+        max-width: 720px;
+    }
+    @media (width >= 62rem) {
+        max-width: 960px;
+    }
+    @media (width >= 75rem) {
+        max-width: 1140px;
+    }
+    @media (width >= 87.5rem) {
+        max-width: 1320px;
+    }
+}
+
+/* Purple-to-orange gradient text used in page titles. */
+@utility text-gradient {
+    background: linear-gradient(10deg, #9f8ced 40%, #fa7c0b 70%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+@layer base {
+    body {
+        background: #000;
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-brand);
+        outline-offset: 2px;
+    }
+}
+
+/* TipTap editor content area in the admin panel. */
+.tiptap {
+    min-height: 220px;
+    outline: none;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    color: var(--color-slate-400);
+    pointer-events: none;
+}
