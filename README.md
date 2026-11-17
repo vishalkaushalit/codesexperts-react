@@ -43,16 +43,6 @@ Optional variables: `APP_URL` (the sitemap otherwise uses the Vercel production 
 
 Image uploads are limited to 4 MB, because Vercel rejects request bodies over 4.5 MB.
 
-### Moving the existing images to Blob (once)
-
-With `BLOB_READ_WRITE_TOKEN` in `server/.env`:
-
-```bash
-npm --prefix server run migrate:blob
-```
-
-This uploads every image still referenced by a local path from `server/uploads/` and replaces the path with its Blob URL. Running it again skips rows that are already done. Afterwards `server/uploads/` is no longer used.
-
 ## Self-hosting
 
 ```bash
