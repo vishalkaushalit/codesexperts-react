@@ -1,9 +1,11 @@
-import fs from 'node:fs/promises';
 import path from 'node:path';
 import multer from 'multer';
+import { del, put } from '@vercel/blob';
 import { env } from '../config/env.ts';
+import { HttpError } from './http.ts';
 
-const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+// Vercel functions reject request bodies over 4.5 MB, so uploads stay below that.
+const MAX_SIZE = 4 * 1024 * 1024; // 4 MB
 
 const TYPES: Record<string, string> = {
     'image/jpeg': 'jpg',
@@ -12,7 +14,7 @@ const TYPES: Record<string, string> = {
     'image/svg+xml': 'svg',
 };
 
-/** Multer instance that keeps the file in memory; saveUpload() writes it after validation passes. */
+/** Multer instance that keeps the file in memory; saveUpload() stores it after validation passes. */
 export const upload = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: MAX_SIZE, files: 1 },
@@ -28,8 +30,9 @@ export function checkImage(file: Express.Multer.File | undefined, { allowSvg = f
     return null;
 }
 
-/** Save to uploads/<dir>/<timestamp>_<safe-name>.<ext> and return the DB path ("dir/file.ext"). */
+/** Store in Vercel Blob under <dir>/<timestamp>_<safe-name>-<random>.<ext>; returns the public URL saved in the DB. */
 export async function saveUpload(file: Express.Multer.File, dir: string): Promise<string> {
+    if (!env.blobToken) throw new HttpError(500, 'Image uploads need BLOB_READ_WRITE_TOKEN (see server/.env.example).');
     const ext = TYPES[file.mimetype];
     const base =
         path
@@ -38,17 +41,20 @@ export async function saveUpload(file: Express.Multer.File, dir: string): Promis
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/^-|-$/g, '')
             .slice(0, 60) || 'image';
-    const filename = `${Math.floor(Date.now() / 1000)}_${base}.${ext}`;
-    const folder = path.join(env.uploadsDir, dir);
-    await fs.mkdir(folder, { recursive: true });
-    await fs.writeFile(path.join(folder, filename), file.buffer);
-    return `${dir}/${filename}`;
+    const blob = await put(`${dir}/${Math.floor(Date.now() / 1000)}_${base}.${ext}`, file.buffer, {
+        access: 'public',
+        contentType: file.mimetype,
+        addRandomSuffix: true,
+    });
+    return blob.url;
 }
 
-/** Delete a previously uploaded file, refusing anything outside the uploads folder. */
-export async function deleteUpload(dbPath: unknown): Promise<void> {
-    if (typeof dbPath !== 'string' || !dbPath) return;
-    const full = path.resolve(env.uploadsDir, dbPath);
-    if (!full.startsWith(env.uploadsDir + path.sep)) return;
-    await fs.rm(full, { force: true });
+/** Delete a previously uploaded image. Only Vercel Blob URLs are touched; failures are logged, not thrown. */
+export async function deleteUpload(stored: unknown): Promise<void> {
+    if (typeof stored !== 'string' || !/^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\//i.test(stored)) return;
+    try {
+        await del(stored);
+    } catch (err) {
+        console.error('Could not delete blob', stored, err);
+    }
 }

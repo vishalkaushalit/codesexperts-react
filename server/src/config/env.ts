@@ -1,31 +1,22 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const root = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "../..",
-);
 const e = process.env;
 
-export const isProduction = e.NODE_ENV === "production";
+/** True on Vercel (preview + production) and when NODE_ENV=production. */
+export const isProduction = e.NODE_ENV === "production" || e.VERCEL === "1";
 
-if (isProduction && !e.MONGODB_URI) {
-  throw new Error(
-    "MONGODB_URI must be set in production (see server/.env.example).",
-  );
-}
-
-if (isProduction && !e.JWT_SECRET) {
-  throw new Error(
-    "JWT_SECRET must be set in production (see server/.env.example).",
-  );
+for (const key of ["MONGODB_URI", "JWT_SECRET"]) {
+  if (isProduction && !e[key]) {
+    throw new Error(`${key} must be set in production (see server/.env.example).`);
+  }
 }
 
 export const env = {
-  port: Number(e.PORT ?? 4000),
-  appUrl: (e.APP_URL ?? "http://localhost:4000").replace(/\/$/, ""),
-  appName: e.APP_NAME ?? "CodesExperts",
-  timezone: e.APP_TIMEZONE ?? "Asia/Kolkata",
+  // Optional: falls back to the Vercel production domain, then to the local dev site.
+  appUrl: (
+    e.APP_URL ??
+    (e.VERCEL_PROJECT_PRODUCTION_URL ? `https://${e.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:5173")
+  ).replace(/\/$/, ""),
+  appName: "CodesExperts",
+  timezone: "Asia/Kolkata",
 
   mongo: {
     uri: e.MONGODB_URI || "mongodb://127.0.0.1:27017",
@@ -34,9 +25,10 @@ export const env = {
 
   jwtSecret: e.JWT_SECRET ?? "dev-only-secret-change-me",
 
-  uploadsDir: path.resolve(root, e.UPLOADS_DIR ?? "uploads"),
-  clientDist: path.resolve(root, e.CLIENT_DIST ?? "../client/dist"),
+  // Images are stored in Vercel Blob; the SDK reads BLOB_READ_WRITE_TOKEN itself.
+  blobToken: e.BLOB_READ_WRITE_TOKEN ?? "",
 
+  // Optional SMTP for enquiry emails. Not set = emails are printed to the server log.
   mail: {
     host: e.SMTP_HOST ?? "",
     port: Number(e.SMTP_PORT ?? 465),

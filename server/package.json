@@ -7,9 +7,10 @@
     "dev": "node --watch --env-file-if-exists=.env src/index.ts",
     "start": "node --env-file-if-exists=.env src/index.ts",
     "typecheck": "tsc",
-    "migrate:mongo": "node --env-file-if-exists=.env scripts/mysql-to-mongo.ts"
+    "migrate:blob": "node --env-file-if-exists=.env scripts/uploads-to-blob.ts"
   },
   "dependencies": {
+    "@vercel/blob": "^2.9.0",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "express": "^5.3.0",
@@ -26,7 +27,6 @@
     "@types/multer": "^2.3.0",
     "@types/node": "^26.6.6",
     "@types/nodemailer": "^8.0.2",
-    "mysql2": "^3.24.6",
     "typescript": "^5.9.3"
   }
 }

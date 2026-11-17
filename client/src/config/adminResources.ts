@@ -67,7 +67,7 @@ export const META_PAGES: Array<[string, string]> = [
     ['Terms and Conditions', '/terms-and-conditions'],
 ];
 
-const IMAGE_HINT = 'JPG, PNG or WebP, up to 5 MB.';
+const IMAGE_HINT = 'JPG, PNG or WebP, up to 4 MB.';
 
 export const adminResources: Record<string, ResourceConfig> = {
     'logo-slider': {
@@ -128,7 +128,7 @@ export const adminResources: Record<string, ResourceConfig> = {
         icon: Cpu,
         columns: [{ key: 'image', label: 'Icon', type: 'image' }, { key: 'heading', label: 'Name' }, created],
         fields: [
-            { name: 'image', label: 'Icon', type: 'image', required: true, accept: 'image/jpeg,image/png,image/webp,image/svg+xml', hint: 'JPG, PNG, WebP or SVG, up to 5 MB.', full: true },
+            { name: 'image', label: 'Icon', type: 'image', required: true, accept: 'image/jpeg,image/png,image/webp,image/svg+xml', hint: 'JPG, PNG, WebP or SVG, up to 4 MB.', full: true },
             { name: 'heading', label: 'Name', required: true },
         ],
     },

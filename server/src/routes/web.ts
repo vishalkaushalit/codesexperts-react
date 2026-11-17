@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import express, { Router } from 'express';
 import { env } from '../config/env.ts';
 import { metaForPath } from '../controllers/publicController.ts';
@@ -35,12 +36,16 @@ router.get('/sitemap.xml', (_req, res) => {
 router.get(['/login', '/dashboard'], (_req, res) => res.redirect(301, '/admin'));
 
 /**
- * Production: serve the built React app and inject per-page SEO meta (from the meta_tags table)
- * into index.html so search engines see it without running JavaScript.
+ * Production: inject per-page SEO meta (from the meta_tags table) into index.html so search
+ * engines see it without running JavaScript.
+ * - `npm start`: Express also serves the built files from client/dist.
+ * - Vercel: the CDN serves the built files; index.html is bundled next to this function.
  */
-const indexFile = path.join(env.clientDist, 'index.html');
-if (fs.existsSync(indexFile)) {
-    router.use(express.static(env.clientDist, { index: false, maxAge: '7d' }));
+const here = path.dirname(fileURLToPath(import.meta.url));
+const clientDist = path.resolve(here, '../../../client/dist');
+const indexFile = [path.join(here, 'index.html'), path.join(clientDist, 'index.html')].find((f) => fs.existsSync(f));
+if (indexFile) {
+    if (fs.existsSync(clientDist)) router.use(express.static(clientDist, { index: false, maxAge: '7d' }));
 
     router.get(
         /.*/,

@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
-// In development, API calls and uploaded images are proxied to the Express server (server/).
+// In development, API calls are proxied to the Express server (server/).
 const API = 'http://localhost:4000';
 
 export default defineConfig({
@@ -11,7 +11,6 @@ export default defineConfig({
         port: 5173,
         proxy: {
             '/api': API,
-            '/uploads': API,
             '/sitemap.xml': API,
         },
     },
