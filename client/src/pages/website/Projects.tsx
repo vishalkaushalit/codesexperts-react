@@ -54,12 +54,14 @@ export default function Projects() {
                                     <h3 className="text-xl font-medium text-white">{p.heading}</h3>
                                     {active === 'all' && <p className="text-sm text-white">({p.category_name})</p>}
                                 </div>
-                                <div className="group mx-auto mb-5 size-[300px] overflow-hidden">
+                                <div className="group relative mx-auto mb-5 size-[300px] overflow-hidden">
+                                    {/* Scroll with transform (GPU-composited) rather than object-position, which repaints every frame. */}
                                     <img
                                         src={uploadUrl(p.image)}
                                         alt={`${p.heading} website screenshot`}
                                         loading="lazy"
-                                        className="size-full object-cover object-top transition-all duration-[3000ms] ease-in-out group-hover:object-bottom"
+                                        decoding="async"
+                                        className="absolute inset-x-0 top-0 h-auto min-h-full w-full object-cover object-top transition-transform duration-[4000ms] ease-in-out will-change-transform group-hover:translate-y-[calc(-100%+300px)]"
                                     />
                                 </div>
                             </div>
