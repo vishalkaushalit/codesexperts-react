@@ -5,7 +5,7 @@ import { cn } from '../../utils/helpers';
 /* Shared website building blocks, matching the original site's typography and buttons. */
 
 export const buttonClass =
-    'flex w-max items-center justify-center rounded-full bg-brand px-6 py-3 text-sm/5 font-medium uppercase text-black transition-colors hover:bg-brand-dark disabled:opacity-60';
+    'flex w-max items-center justify-center rounded-lg bg-brand px-6 py-3 text-sm/5 font-medium uppercase text-black transition-colors hover:bg-brand-dark disabled:opacity-60';
 
 export function ButtonLink({ className, ...props }: LinkProps) {
     return <Link className={cn(buttonClass, className)} {...props} />;

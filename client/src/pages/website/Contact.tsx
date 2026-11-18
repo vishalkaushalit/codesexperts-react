@@ -16,8 +16,8 @@ const FIELDS: Array<{ name: Field; label: string; type: string; autoComplete: st
 ];
 
 const fieldBase = 'w-full bg-white p-2.5 text-black outline-offset-2';
-const inputClass = `${fieldBase} rounded-full`;
-const textareaClass = `${fieldBase} min-h-[150px] rounded-[20px]`;
+const inputClass = `${fieldBase} rounded-lg`;
+const textareaClass = `${fieldBase} min-h-[150px] rounded-lg`;
 
 export default function Contact() {
     const [form, setForm] = useState<Form>(EMPTY);

@@ -51,7 +51,7 @@ export default function Newsletter() {
                                 placeholder="Enter your email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-3/5 rounded-full bg-white p-2.5 text-black placeholder:text-slate-500"
+                                className="w-3/5 rounded-lg bg-white p-2.5 text-black placeholder:text-slate-500"
                             />
                             <Button type="submit" disabled={sending}>
                                 {sending ? 'Sending…' : 'Subscribe'}
